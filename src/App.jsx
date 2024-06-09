@@ -14,6 +14,7 @@ import {
 import { ErrorElement } from './components';
 
 // actions
+
 import { action as registerAction } from './pages/Register';
 import { action as loginAction } from './pages/Login';
 import { store } from './store';
@@ -44,6 +45,7 @@ const router = createBrowserRouter([
         path: '/tickets',
         element: <DashboardTickets />,
         errorElement: <Error />,
+
       },
       {
         path: '/create-ticket',

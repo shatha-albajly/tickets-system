@@ -1,11 +1,10 @@
+// features/tickets/ticketsSlice.js
 import { createSlice } from '@reduxjs/toolkit';
 
 const ticketsSlice = createSlice({
     name: 'tickets',
     initialState: [
-        { id: 1, title: "Cy Ganderton", description: "Quality Control Specialist", status: "active", comments: ['1', '2'] },
-        { id: 2, title: "Hart Hagerty", description: "Desktop Support Technician", status: "solved", comments: [] },
-        { id: 3, title: "Brice Swyre", description: "Tax Accountant", status: "active", comments: [] }
+
     ],
     reducers: {
         addTicket: (state, action) => {
@@ -24,11 +23,13 @@ const ticketsSlice = createSlice({
             if (ticket) {
                 ticket.comments.push(comment);
             }
+        },
+        setTickets: (state, action) => {
+            return action.payload;
         }
     }
 });
 
-export const { addTicket, updateTicketStatus, addComment } = ticketsSlice.actions;
+export const { addTicket, updateTicketStatus, addComment, setTickets } = ticketsSlice.actions;
 
 export default ticketsSlice.reducer;
-

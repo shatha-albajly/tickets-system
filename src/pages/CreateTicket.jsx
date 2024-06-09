@@ -1,27 +1,49 @@
 // components/CreateTicket.js
 import React from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useForm } from 'react-hook-form';
-// import { useHistory } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import { customFetch } from '../utils';
 import { addTicket } from '../features/ticket/ticketSlice';
-import { comment } from 'postcss';
-
 
 const CreateTicket = () => {
     const dispatch = useDispatch();
-    // const history = useHistory();
+    const token = useSelector(state => state.userState.user.token);
     const { register, handleSubmit, reset, formState: { errors } } = useForm();
 
-    const onSubmit = (data) => {
-        console.log({ ...data, status: 'open', comments: [] });
-        dispatch(addTicket({ ...data, status: 'open', comments: [] }));
-        reset();
-        // history.push('/'); // Redirect to the home page after submission
+    const onSubmit = async (data) => {
+        try {
+            const response = await customFetch.post('/tickets',
+                {
+                    ...data, status: 'open', device_name: "iPhone 12", "created_by": 17
+                },
+                {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        "Accept": "application/json",
+                        "Authorization": `Bearer ${token}`,
+                    },
+                }
+            );
+
+            if (response.status === 201) {
+                dispatch(addTicket(response.data));
+                toast.success('Ticket created successfully.');
+                reset();
+                // Redirect to the home page after submission
+                // history.push('/');
+            } else {
+                toast.error('Error creating ticket. Please try again.');
+            }
+        } catch (error) {
+            console.error(error);
+            toast.error('Error creating ticket. Please try again.');
+        }
     };
 
     return (
         <>
-            <h1 className="mb-4 text-2xl font-bold  text-center">Create New Ticket</h1>
+            <h1 className="mb-4 text-2xl font-bold text-center">Create New Ticket</h1>
             <form className="max-w-md mx-auto border shadow rounded-lg p-7" onSubmit={handleSubmit(onSubmit)}>
                 <div className="form-control">
                     <label className="label">Name</label>
@@ -39,18 +61,8 @@ const CreateTicket = () => {
                     ></textarea>
                     {errors.description && <p className="text-red-500">{errors.description.message}</p>}
                 </div>
-
-
-                {/* <div className="form-control">
-                    <label className="label">Comments</label>
-                    <textarea
-                        {...register("comments", { required: "Comments are required" })}
-                        className="textarea textarea-bordered"
-                    ></textarea>
-                    {errors.comments && <p className="text-red-500">{errors.comments.message}</p>}
-                </div> */}
-                <div className="flex gap-4  mt-4 w-full justify-between">
-                    <button type="submit" className="btn w-full  btn-primary">Submit</button>
+                <div className="flex gap-4 mt-4 w-full justify-between">
+                    <button type="submit" className="btn w-full btn-primary">Submit</button>
                 </div>
             </form>
         </>

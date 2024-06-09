@@ -12,14 +12,21 @@ export const action =
       const data = Object.fromEntries(formData);
 
       try {
-        const response = await customFetch.post('/auth/local', data);
+        const response = await customFetch.post('/login', data, {
+          headers: {
+            'Content-Type': 'application/json',
+            "Accept": "application/json",
+          },
+        });
+        console.log(response.data);
         store.dispatch(loginUser(response.data));
         toast.success('logged in successfully');
         return redirect('/');
       } catch (error) {
+
         const errorMessage =
-          error?.response?.data?.error?.message ||
-          'please double check your credentials';
+          error?.response?.data?.message;
+
         toast.error(errorMessage);
         return null;
       }
@@ -31,15 +38,21 @@ const Login = () => {
 
   const loginAsGuestUser = async () => {
     try {
-      const response = await customFetch.post('/auth/local', {
-        identifier: 'test@test.com',
-        password: 'secret',
+      const response = await customFetch.post('/login', {
+        email: 'mokhtar.ghaleb@gmail.com',
+        password: '12345678',
+      }, {
+        headers: {
+          'Content-Type': 'application/json',
+          "Accept": "application/json",
+        },
       });
+      console.log(response.data);
       dispatch(loginUser(response.data));
       toast.success('welcome guest user');
       navigate('/');
     } catch (error) {
-      console.log(error);
+      console.log(error.response);
       toast.error('guest user login error. please try again');
     }
   };
@@ -51,7 +64,7 @@ const Login = () => {
         className='card w-96  p-8 bg-base-100 shadow-lg flex flex-col gap-y-4'
       >
         <h4 className='text-center text-3xl font-bold'>Login</h4>
-        <FormInput type='email' label='email' name='identifier' />
+        <FormInput type='email' label='email' name='email' />
         <FormInput type='password' label='password' name='password' />
         <div className='mt-4'>
           <SubmitBtn text='login' />
