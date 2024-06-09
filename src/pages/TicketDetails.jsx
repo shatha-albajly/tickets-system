@@ -64,6 +64,8 @@ const TicketDetails = () => {
 
             if (response.status === 200) {
                 console.log(response);
+                toast.success('Ticket status updated successfully.');
+
 
                 dispatch(updateTicketStatus({ id: ticket.id, status: newStatus }));
 
